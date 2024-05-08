@@ -1,16 +1,16 @@
-`timescale 1ns / 1ps
-
 module cpu(
     input clk,
-    input reset
+    input reset,
+    output [7:0] ir
 );
 reg [7:0] pc = 0;
 wire [7:0] next_pc;
 wire [7:0] instruction;
 wire [3:0] opcode, operand;
 reg [7:0] regfile[0:15];
+wire [7:0] execute_result;
 
-// 모듈 인스턴스
+
 fetch f0(
     .clk(clk),
     .reset(reset),
@@ -29,14 +29,18 @@ execute e0(
     .clk(clk),
     .opcode(opcode),
     .operand(operand),
-    .regfile(regfile)
+    .data(regfile[operand]),  
+    .result(execute_result)  
 );
+
+assign ir = instruction;
 
 always @(posedge clk) begin
     if (reset) begin
         pc <= 0;
     end else begin
-        pc <= next_pc; // PC 업데이트
+        pc <= next_pc;  
+        regfile[operand] <= execute_result;  
     end
 end
 
