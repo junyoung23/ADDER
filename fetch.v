@@ -2,25 +2,23 @@ module fetch(
     input clk,
     input reset,
     input [7:0] pc,
-    output reg [7:0] instruction,
-    output reg [7:0] next_pc
+    output reg [7:0] instruction
 );
 
-// ë©”ëª¨ë¦¬ ì •ì˜ (ì„ì‹œë¡œ ëª…ë ¹ì–´ ì €ì¥)
-reg [7:0] memory[0:255];
+reg [7:0] memory[0:255]; // °¡»óÀÇ ¸Ş¸ğ¸®
 
 initial begin
-    memory[0] = 8'b00010001; // ì˜ˆ: opcode 1, operand 1
-    memory[1] = 8'b00100010; // ì˜ˆ: opcode 2, operand 2
-    // ë©”ëª¨ë¦¬ ì´ˆê¸°í™” ë“±
+    // ¸Ş¸ğ¸®¿¡ ¸í·É¾î »çÀü ·Îµå
+    memory[0] = 8'b00010001; // ¿¹½Ã ¸í·É¾î
+    memory[1] = 8'b00100010;
+    // Ãß°¡ÀûÀÎ ¸Ş¸ğ¸® ÃÊ±âÈ­ ÇÊ¿ä½Ã ¿©±â¿¡ ÀÛ¼º
 end
 
-always @(posedge clk) begin
+always @(posedge clk or posedge reset) begin
     if (reset) begin
-        next_pc <= 0;
+        instruction <= 0; // ¸®¼Â ½Ã ¸í·É¾î Å¬¸®¾î
     end else begin
-        instruction <= memory[pc]; // ë©”ëª¨ë¦¬ì—ì„œ ëª…ë ¹ì–´ ì½ê¸°
-        next_pc <= pc + 1;         // ë‹¤ìŒ ëª…ë ¹ì–´ ì£¼ì†Œ ê³„ì‚°
+        instruction <= memory[pc]; // ÇöÀç PC¿¡¼­ ¸í·É¾î ÀĞ±â
     end
 end
 
